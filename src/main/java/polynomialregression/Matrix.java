@@ -9,7 +9,7 @@ public class Matrix {
     private int numColumns;
     private int numRows;
     private static Map<Matrix, BigDecimal> determinantMap = new HashMap<>();
-    private static int scale = 10;
+    private static int scale = 100;
 
     public Matrix(ArrayList<ArrayList<BigDecimal>> twoDemArray) {
         numRows = twoDemArray.size();

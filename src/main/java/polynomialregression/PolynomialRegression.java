@@ -24,7 +24,8 @@ public class PolynomialRegression {
         mapSums = new HashMap<>();
     }
 
-    public void regressPoints() {
+    public void
+    regressPoints() {
         init();
         /*
         System.out.println("Value Matrix:");
@@ -36,7 +37,10 @@ public class PolynomialRegression {
 
         System.out.println("\n\nMultiply Matrix:");
         valueMatrix.getMultiply(matrix).printMatrix();//*/
+
         valueMatrix.printMatrix();
+        System.out.println();
+        resultMatrix.printMatrix();
 
         System.out.println("\n-----------------------------------------------\n");
 
@@ -44,13 +48,14 @@ public class PolynomialRegression {
 
         System.out.println("\n-----------------------------------------------\n");
 
-        resultMatrix.printMatrix();
+        (valueMatrix.getInverse2().getMultiply(resultMatrix)).printMatrix();
+        //resultMatrix.getInverse2();
 
         System.out.println("\n-----------------------------------------------\n");
 
-        coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix);
+        //coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix);
 
-        coefficientMatrix.printMatrix();
+        //coefficientMatrix.printMatrix();
     }
 
     public void printString() {
@@ -103,7 +108,7 @@ public class PolynomialRegression {
             BigDecimal powX1 = new BigDecimal(point.x).pow(power);
             xSum = xSum.add(powX1);
             if (calcYValues) {
-                ySum = ySum.add(new BigDecimal(point.y).multiply(xSum));
+                ySum = ySum.add(new BigDecimal(point.y).multiply(powX1));
             }
         }
         mapSums.put(new Variable("x", power), xSum);

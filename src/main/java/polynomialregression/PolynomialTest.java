@@ -31,7 +31,7 @@ public class PolynomialTest {
         for (int i = 0; i < 10; i++) {
             points.add(new Point(i, (int) Math.pow(i, 2)));
         }
-        PolynomialRegression regression = new PolynomialRegression(points, 2);
+        PolynomialRegression regression = new PolynomialRegression(points, 10);
         regression.regressPoints();//*/
     }
 
