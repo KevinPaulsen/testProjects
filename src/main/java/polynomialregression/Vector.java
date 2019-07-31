@@ -1,26 +1,28 @@
 package polynomialregression;
 
+import java.math.BigDecimal;
+
 public class Vector {
 
-    private Fraction[] dimensions;
+    private BigDecimal[] dimensions;
 
-    public Vector(Fraction[] dimensions) {
+    public Vector(BigDecimal[] dimensions) {
         this.dimensions = dimensions;
     }
 
-    public Fraction getDotProduct(Vector vector) {
+    public BigDecimal getDotProduct(Vector vector) {
         if (dimensions.length != vector.getSize()) {
             throw new RuntimeException("Vectors are not of same size");
         }
-        Fraction dotProduct = new Fraction("0", "1");
+        BigDecimal dotProduct = new BigDecimal("0");
 
         for (int idx = 0; idx < dimensions.length; idx++) {
-            dotProduct.add(this.dimensions[idx].getMultiply(vector.getDimensions()[idx]));
+            dotProduct = dotProduct.add(this.dimensions[idx].multiply(vector.getDimensions()[idx]));
         }
         return dotProduct;
     }
 
-    public Fraction[] getDimensions() {
+    public BigDecimal[] getDimensions() {
         return dimensions;
     }
 

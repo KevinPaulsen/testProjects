@@ -36,8 +36,19 @@ public class PolynomialRegression {
 
         System.out.println("\n\nMultiply Matrix:");
         valueMatrix.getMultiply(matrix).printMatrix();//*/
+        valueMatrix.printMatrix();
 
-        coefficientMatrix = valueMatrix.getInverse().getMultiply(resultMatrix);
+        System.out.println("\n-----------------------------------------------\n");
+
+        valueMatrix.getInverse2().printMatrix();
+
+        System.out.println("\n-----------------------------------------------\n");
+
+        resultMatrix.printMatrix();
+
+        System.out.println("\n-----------------------------------------------\n");
+
+        coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix);
 
         coefficientMatrix.printMatrix();
     }
@@ -67,15 +78,15 @@ public class PolynomialRegression {
     }
 
     private void initValues() {
-        ArrayList<ArrayList<Fraction>> valueMatrix = new ArrayList<>();
-        ArrayList<ArrayList<Fraction>> resultMatrix = new ArrayList<>();
+        ArrayList<ArrayList<BigDecimal>> valueMatrix = new ArrayList<>();
+        ArrayList<ArrayList<BigDecimal>> resultMatrix = new ArrayList<>();
         for (int row = 0; row <= degree; row++) {
-            ArrayList<Fraction> rowValues = new ArrayList<>();
+            ArrayList<BigDecimal> rowValues = new ArrayList<>();
             for (int column = 0; column <= degree; column++) {
-                rowValues.add(new Fraction(mapSums.get(new Variable("x", row + column)).toString(), "1"));
+                rowValues.add(new BigDecimal(mapSums.get(new Variable("x", row + column)).toString()));
             }
-            ArrayList<Fraction> result = new ArrayList<>();
-            result.add(new Fraction(mapSums.get(new Variable("xy", row)).toString(), "1"));
+            ArrayList<BigDecimal> result = new ArrayList<>();
+            result.add(new BigDecimal(mapSums.get(new Variable("xy", row)).toString()));
             resultMatrix.add(result);
             valueMatrix.add(rowValues);
         }
