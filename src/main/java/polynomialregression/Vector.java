@@ -2,15 +2,15 @@ package polynomialregression;
 
 import java.math.BigDecimal;
 
-public class Vector {
+class Vector {
 
     private BigDecimal[] dimensions;
 
-    public Vector(BigDecimal[] dimensions) {
+    Vector(BigDecimal[] dimensions) {
         this.dimensions = dimensions;
     }
 
-    public BigDecimal getDotProduct(Vector vector) {
+    BigDecimal getDotProduct(Vector vector) {
         if (dimensions.length != vector.getSize()) {
             throw new RuntimeException("Vectors are not of same size");
         }
@@ -22,11 +22,11 @@ public class Vector {
         return dotProduct;
     }
 
-    public BigDecimal[] getDimensions() {
+    private BigDecimal[] getDimensions() {
         return dimensions;
     }
 
-    public int getSize() {
+    private int getSize() {
         return dimensions.length;
     }
 }

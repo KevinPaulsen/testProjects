@@ -8,10 +8,9 @@ public class Matrix {
     private BigDecimal[][] matrix;
     private int numColumns;
     private int numRows;
-    private static Map<Matrix, BigDecimal> determinantMap = new HashMap<>();
     private static int scale = 100;
 
-    public Matrix(ArrayList<ArrayList<BigDecimal>> twoDemArray) {
+    Matrix(ArrayList<ArrayList<BigDecimal>> twoDemArray) {
         numRows = twoDemArray.size();
         numColumns = twoDemArray.get(0).size();
         matrix = new BigDecimal[numRows][numColumns];
@@ -37,19 +36,13 @@ public class Matrix {
         }
     }
 
-    private Matrix(int size) {
-        numColumns = size;
-        numRows = size;
-        matrix = new BigDecimal[size][size];
-    }
-
-    public Matrix(BigDecimal[][] matrix) {
+    private Matrix(BigDecimal[][] matrix) {
         this.matrix = matrix;
         numColumns = matrix.length;
         numRows = matrix[0].length;
     }
 
-    public void printMatrix() {
+    void printMatrix() {
         for (BigDecimal[] row : matrix) {
             for (BigDecimal value : row) {
                 System.out.printf("%18.5f ", value.doubleValue());
@@ -58,7 +51,7 @@ public class Matrix {
         }
     }
 
-    public Matrix getMultiply(Matrix matrix) {
+    Matrix getMultiply(Matrix matrix) {
         if (this.numColumns != matrix.getNumRows()) {
             throw new RuntimeException("Illegal matrix dimensions.");
         }
@@ -75,7 +68,7 @@ public class Matrix {
         return new Matrix(newMatrix);
     }
 
-    public Matrix getInverse2() {
+    Matrix getInverse2() {
         if (numRows != numColumns) {
             throw new RuntimeException("Matrix is not square.");
         }
@@ -149,121 +142,6 @@ public class Matrix {
         return matrixRow;
     }
 
-    BigDecimal getDeterminant(Matrix matrix) {
-        if (matrix.getNumRows() != matrix.getNumColumns()) {
-            throw new RuntimeException("Matrix is not square.");
-        } else if (matrix.getNumRows() < 2) {
-            throw new RuntimeException("Matrix of size" + matrix.getNumRows() + " is too small");
-        }
-
-        BigDecimal determinant;
-        if (matrix.getNumRows() == 2) {
-            BigDecimal aTimesD = matrix.getValue(0, 0).multiply(matrix.getValue(1, 1));
-            BigDecimal bTimesC = matrix.getValue(1, 0).multiply(matrix.getValue(0, 1));
-            determinant = aTimesD.subtract(bTimesC);
-            determinantMap.put(matrix, determinant);
-        } else {
-            determinant = new BigDecimal("0");
-            for (int column = 0; column < matrix.getNumRows(); column++) {
-
-                Matrix subMatrix = getSubMatrix(matrix, 0, column);
-                BigDecimal subDeterminant = determinantMap.get(subMatrix);
-                if (subDeterminant == null) {
-                    subDeterminant = Objects.requireNonNull(getDeterminant(subMatrix));
-                }
-                determinant.add(matrix.getValue(0, column)
-                        .multiply(subDeterminant)
-                                .multiply(new BigDecimal("" + Math.pow(-1, column))));
-                determinantMap.put(subMatrix, subDeterminant);
-            }
-        }
-        return determinant;
-    }
-
-    private static Matrix getSubMatrix(Matrix matrix, int row, int column) {
-        BigDecimal[][] subMatrix = new BigDecimal[matrix.getNumRows() - 1][matrix.getNumRows() - 1];
-        int rowOffset = 0;
-        for (int r = 0; r < matrix.getNumRows(); r++) {
-            if (r == row) {
-                rowOffset = 1;
-                continue;
-            }
-            int columnOffset = 0;
-            for (int c = 0; c < matrix.getNumRows(); c++) {
-                if (c == column) {
-                    columnOffset = 1;
-                    continue;
-                }
-                subMatrix[r - rowOffset][c - columnOffset] = matrix.getValue(r, c);
-            }
-        }
-        return new Matrix(subMatrix);
-    }
-
-    public Matrix getInverse() {
-        Matrix matrixOfMinors = calcMatrixOfMinors();
-        Matrix matrixOfCofactors = calcMatrixOfCofactors(matrixOfMinors);
-        return adjugate(matrixOfCofactors).getMultiply(new BigDecimal("1").divide(getDeterminant(this),
-                scale,
-                BigDecimal.ROUND_HALF_UP));
-    }
-
-    private Matrix calcMatrixOfMinors() {
-        Matrix matrixOfMinors = new Matrix(numColumns);
-        for (int row = 0; row < matrix.length; row++) {
-            for (int column = 0; column < matrix.length; column++) {
-                matrixOfMinors.setValue(getDeterminant(getSubMatrix(this, row, column)), row, column);
-            }
-        }
-        return matrixOfMinors;
-    }
-
-    private Matrix calcMatrixOfCofactors(Matrix matrix) {
-        for (int row = 0; row < matrix.getNumRows(); row++) {
-            for (int column = 0; column < matrix.getNumRows(); column++) {
-                matrix.setValue(matrix.getValue(row, column).multiply(
-                        new BigDecimal("" + Math.pow(-1, row + column))),
-                        row,
-                        column);
-            }
-        }
-        return matrix;
-    }
-
-    private Matrix adjugate(Matrix matrix) {
-        BigDecimal[][] matrixCopy = new BigDecimal[getNumRows()][getNumColumns()];
-
-        for (int row = 0; row < matrix.getNumRows(); row++) {
-            for (int column = 0; column < matrix.getNumRows(); column++) {
-                matrixCopy[row][column] = matrix.getValue(column, row);
-            }
-        }
-
-        return new Matrix(matrixCopy);
-    }
-
-    private BigDecimal[] getRow(int row) {
-        return matrix[row];
-    }
-
-    private void setRow(int row, BigDecimal[] matrixRow) {
-        matrix[row] = matrixRow;
-    }
-
-    private void setValue(BigDecimal value, int row, int column) {
-        matrix[row][column] = value;
-    }
-
-    private Matrix getMultiply(BigDecimal scalar) {
-        BigDecimal[][] multipliedMatrix = new BigDecimal[getNumRows()][getNumColumns()];
-        for (int row = 0; row < getNumRows(); row++) {
-            for (int column = 0; column < getNumColumns(); column++) {
-                multipliedMatrix[row][column] = getValue(row, column).multiply(scalar);
-            }
-        }
-        return new Matrix(multipliedMatrix);
-    }
-
     private static Vector getVirticleVector(int columnNum, Matrix matrix) {
         BigDecimal[] dimensions = new BigDecimal[matrix.getNumRows()];
         for (int row = 0; row < matrix.getNumRows(); row++) {
@@ -293,19 +171,19 @@ public class Matrix {
         return Arrays.deepHashCode(matrix);
     }
 
-    public BigDecimal[][] getMatrix() {
+    private BigDecimal[][] getMatrix() {
         return matrix;
     }
 
-    public BigDecimal getValue(int row, int column) {
+    private BigDecimal getValue(int row, int column) {
         return matrix[row][column];
     }
 
-    public int getNumColumns() {
+    private int getNumColumns() {
         return numColumns;
     }
 
-    public int getNumRows() {
+    private int getNumRows() {
         return numRows;
     }
 }
