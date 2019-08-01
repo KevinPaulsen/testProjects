@@ -13,8 +13,11 @@ public class Variable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return (compareString.equals(((Variable) obj).getCompareString()));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Variable variable = (Variable) o;
+        return compareString.equals(variable.getCompareString());
     }
 
     @Override

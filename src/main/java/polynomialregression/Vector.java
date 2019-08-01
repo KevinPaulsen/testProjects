@@ -12,7 +12,7 @@ class Vector {
 
     BigDecimal getDotProduct(Vector vector) {
         if (dimensions.length != vector.getSize()) {
-            throw new RuntimeException("Vectors are not of same size");
+            throw new RuntimeException("Vectors are not of same size.");
         }
         BigDecimal dotProduct = new BigDecimal("0");
 

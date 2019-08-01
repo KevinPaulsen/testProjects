@@ -17,6 +17,9 @@ public class PolynomialRegression {
     private Matrix coefficientMatrix;
 
     public PolynomialRegression(ArrayList<Point> dataPoints, int degree) {
+        if (dataPoints.size() < degree) {
+            throw new RuntimeException("Not enough points to have a polynomial of degree: " + dataPoints.size());
+        }
         this.dataPoints = dataPoints;
         this.degree = degree;
         mapSums = new HashMap<>();
@@ -26,18 +29,7 @@ public class PolynomialRegression {
     regressPoints() {
         init();
 
-        valueMatrix.printMatrix();
-        System.out.println();
-        resultMatrix.printMatrix();
-
-        System.out.println("\n-----------------------------------------------\n");
-
-        valueMatrix.getInverse2().printMatrix();
-
-        System.out.println("\n-----------------------------------------------\n");
-
         coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix);
-        coefficientMatrix.printMatrix();
     }
 
     private void init() {

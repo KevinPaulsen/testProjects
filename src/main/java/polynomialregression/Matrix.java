@@ -1,6 +1,7 @@
 package polynomialregression;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class Matrix {
@@ -45,7 +46,7 @@ public class Matrix {
     void printMatrix() {
         for (BigDecimal[] row : matrix) {
             for (BigDecimal value : row) {
-                System.out.printf("%18.5f ", value.doubleValue());
+                System.out.printf("%30.5f ", value.doubleValue());
             }
             System.out.println("\n");
         }
@@ -103,9 +104,9 @@ public class Matrix {
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
                 if (row == column) {
-                    matrixValues[row][column] = new BigDecimal("1");
+                    matrixValues[row][column] = new BigDecimal("1").setScale(scale, RoundingMode.HALF_UP);
                 } else {
-                    matrixValues[row][column] = new BigDecimal("0");
+                    matrixValues[row][column] = new BigDecimal("0").setScale(scale, RoundingMode.HALF_UP);
                 }
             }
         }
@@ -122,8 +123,8 @@ public class Matrix {
         BigDecimal leadingReciprocal = matrixRow[row][row];
 
         for (int idx = 0; idx < matrixRow.length; idx++) {
-            matrixRow[row][idx] = matrixRow[row][idx].divide(leadingReciprocal, scale, BigDecimal.ROUND_HALF_UP);
-            augmentedMatrixRow[row][idx] = augmentedMatrixRow[row][idx].divide(leadingReciprocal, scale, BigDecimal.ROUND_HALF_UP);
+            matrixRow[row][idx] = matrixRow[row][idx].divide(leadingReciprocal, scale, RoundingMode.HALF_UP);
+            augmentedMatrixRow[row][idx] = augmentedMatrixRow[row][idx].divide(leadingReciprocal, scale, RoundingMode.HALF_UP);
         }
     }
 
@@ -155,20 +156,7 @@ public class Matrix {
     }
 
     private static BigDecimal decimalCopy(BigDecimal original) {
-        return original.multiply(new BigDecimal("1"));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Matrix matrix1 = (Matrix) o;
-        return Arrays.deepEquals(matrix, matrix1.getMatrix());
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.deepHashCode(matrix);
+        return original.multiply(new BigDecimal("1")).setScale(scale, RoundingMode.HALF_UP);
     }
 
     private BigDecimal[][] getMatrix() {

@@ -28,10 +28,10 @@ public class PolynomialTest {
         //testMatrix.getMultiply(testMatrix.getInverse2()).printMatrix();//*/
 
         ArrayList<Point> points = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             points.add(new Point(i, (int) Math.pow(i, 2)));
         }
-        PolynomialRegression regression = new PolynomialRegression(points, 10);
+        PolynomialRegression regression = new PolynomialRegression(points, 30);
         regression.regressPoints();//*/
     }
 
