@@ -75,4 +75,14 @@ public class PolynomialRegression {
             mapSums.put(new Variable("xy", power), ySum);
         }
     }
+
+    double getYValue(double x) {
+        BigDecimal yValue = new BigDecimal(0);
+
+        for (int idx = 0; idx < coefficientMatrix.getMatrix().length; idx++) {
+            yValue = yValue.add(coefficientMatrix.getMatrix()[idx][0].multiply(new BigDecimal(x).pow(idx)));
+        }
+
+        return yValue.doubleValue();
+    }
 }

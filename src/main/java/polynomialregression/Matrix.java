@@ -159,7 +159,7 @@ public class Matrix {
         return original.multiply(new BigDecimal("1")).setScale(scale, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal[][] getMatrix() {
+    BigDecimal[][] getMatrix() {
         return matrix;
     }
 
