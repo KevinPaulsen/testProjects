@@ -1,11 +1,20 @@
 package polynomialregression;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class PolynomialTest {
 
-    private int scale = 20;
+    ArrayList<Point> mapPoints = new ArrayList<>();
+    ArrayList<Point> xPoints = new ArrayList<>();
+    ArrayList<Point> yPoints = new ArrayList<>();
+
+
+
+    private double scale = 0.27;
 
     public static void main(String[] args) {
 
@@ -14,18 +23,47 @@ public class PolynomialTest {
     }
 
     private PolynomialTest() {
-        ArrayList<Point> points = new ArrayList<>();
 
-        points = getHardCodedValues();
+        /*for (int c = 0; c < 17; c++) {
+            mapPoints.add(new Point(c, 1));
+        }
 
-        PolynomialRegression regression = new PolynomialRegression(points, 6);
+        PolynomialRegression regression = new PolynomialRegression(mapPoints, 16);
         regression.regressPoints();//*/
 
-        Graph graph = new Graph(500, 500, -200, 0, scale);
+
+        try {
+            Scanner scanner = new Scanner(new File("list.txt"));
+            scanner.next();
+            while (scanner.hasNext()) {
+                int x = scanner.nextInt();
+                int y = scanner.nextInt();
+                mapPoints.add(new Point(x, y));
+            }
+            for (int i = 0; i < mapPoints.size(); i += 1) {
+                xPoints.add(new Point(i, mapPoints.get(i).x));
+                yPoints.add(new Point(i, mapPoints.get(i).y));
+            }
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        PolynomialRegression xRegression = new PolynomialRegression(xPoints, 14);
+        xRegression.regressPoints();//
+        //PolynomialRegression yRegression = new PolynomialRegression(yPoints, 15);
+        //yRegression.regressPoints();//
+
+        Graph graph = new Graph(800, 800, -300, -300, scale);
         graph.drawGridLines();
-        drawPoints(points, graph);
-        approximateLine(regression, graph, points.get(0).x, points.get(points.size() - 1).x * 10, (1.0 / scale));
-        //graph.drawPoint(xOffset, yOffset, 10, Color.MAGENTA);
+
+        drawPoints(xPoints, graph);
+        //drawPoints(yPoints, graph);
+        approximateLine(xRegression, graph, xPoints.get(0).x, xPoints.get(xPoints.size() - 1).x, (1.0 / scale));
+        //approximateLine(yRegression, graph, yPoints.get(0).x, yPoints.get(yPoints.size() - 1).x, (1.0 / scale));
+
+        //drawPoints(mapPoints, graph);
+        //drawParametricEquation(new ParametricEquation(xRegression, yRegression), xPoints.get(xPoints.size() - 1).x - 1, graph);
+        //*/
     }
 
     private void approximateLine(PolynomialRegression regression, Graph graph, int start, int end, double step) {
@@ -37,9 +75,22 @@ public class PolynomialTest {
 
     }
 
+    private void drawParametricEquation(ParametricEquation parametricEquation, int endTValue, Graph graph) {
+
+        for (int t = 0; t < endTValue; t++) {
+            graph.drawPoint(
+                    parametricEquation.getXValueAtT(t),
+                    parametricEquation.getYValueAtT(t),
+                    3,
+                    Color.MAGENTA
+            );
+        }
+
+    }
+
     private void drawPoints(ArrayList<Point> points, Graph graph) {
         for (Point point : points) {
-            graph.drawPoint(point.x, point.y, 5, Color.BLACK);
+            graph.drawPoint(point.x, point.y, 3, Color.BLACK);
         }
     }
 

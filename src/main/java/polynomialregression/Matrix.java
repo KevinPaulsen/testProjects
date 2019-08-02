@@ -6,6 +6,16 @@ import java.util.*;
 
 public class Matrix {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
     private BigDecimal[][] matrix;
     private int numColumns;
     private int numRows;
@@ -46,9 +56,15 @@ public class Matrix {
     void printMatrix() {
         for (BigDecimal[] row : matrix) {
             for (BigDecimal value : row) {
-                System.out.printf("%30.5f ", value.doubleValue());
+                if (value.doubleValue() == 1) {
+                    System.out.printf(ANSI_GREEN + "%20.50f " + ANSI_RESET, value.doubleValue());
+                } else if (value.remainder(new BigDecimal("1")).abs().doubleValue() < 0.0000000001) {
+                    System.out.printf(ANSI_WHITE + "%20.50f " + ANSI_RESET, value.doubleValue());
+                } else {
+                    System.out.printf(ANSI_RED + "%20.50f " + ANSI_RESET, value.doubleValue());
+                }
             }
-            System.out.println("\n");
+            System.out.println("");
         }
     }
 
@@ -82,6 +98,10 @@ public class Matrix {
             makeColumnZero(row, matrixCopy.getMatrix(), augmentedMatrix.getMatrix());
         }
 
+        this.printMatrix();
+        System.out.println("\n-----------------------------------------------------------------------------------------\n");
+        (augmentedMatrix).printMatrix();
+
         return augmentedMatrix;
     }
 
@@ -104,9 +124,9 @@ public class Matrix {
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
                 if (row == column) {
-                    matrixValues[row][column] = new BigDecimal("1").setScale(scale, RoundingMode.HALF_UP);
+                    matrixValues[row][column] = new BigDecimal("1");
                 } else {
-                    matrixValues[row][column] = new BigDecimal("0").setScale(scale, RoundingMode.HALF_UP);
+                    matrixValues[row][column] = new BigDecimal("0");
                 }
             }
         }
@@ -156,7 +176,7 @@ public class Matrix {
     }
 
     private static BigDecimal decimalCopy(BigDecimal original) {
-        return original.multiply(new BigDecimal("1")).setScale(scale, RoundingMode.HALF_UP);
+        return original.multiply(new BigDecimal("1"));
     }
 
     BigDecimal[][] getMatrix() {

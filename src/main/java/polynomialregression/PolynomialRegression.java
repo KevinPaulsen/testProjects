@@ -25,8 +25,7 @@ public class PolynomialRegression {
         mapSums = new HashMap<>();
     }
 
-    public void
-    regressPoints() {
+    public void regressPoints() {
         init();
 
         coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix);
@@ -59,15 +58,15 @@ public class PolynomialRegression {
     }
 
     private void calculatePowSum(int power) {
-        BigDecimal xSum = new BigDecimal(0);
-        BigDecimal ySum = new BigDecimal(0);
+        BigDecimal xSum = new BigDecimal("0");
+        BigDecimal ySum = new BigDecimal("0");
         boolean calcYValues = power <= degree;
 
         for (Point point : dataPoints) {
-            BigDecimal powX1 = new BigDecimal(point.x).pow(power);
+            BigDecimal powX1 = new BigDecimal(Integer.toString(point.x)).pow(power);
             xSum = xSum.add(powX1);
             if (calcYValues) {
-                ySum = ySum.add(new BigDecimal(point.y).multiply(powX1));
+                ySum = ySum.add(new BigDecimal(Integer.toString(point.y)).multiply(powX1));
             }
         }
         mapSums.put(new Variable("x", power), xSum);
@@ -77,10 +76,10 @@ public class PolynomialRegression {
     }
 
     double getYValue(double x) {
-        BigDecimal yValue = new BigDecimal(0);
+        BigDecimal yValue = new BigDecimal("0");
 
         for (int idx = 0; idx < coefficientMatrix.getMatrix().length; idx++) {
-            yValue = yValue.add(coefficientMatrix.getMatrix()[idx][0].multiply(new BigDecimal(x).pow(idx)));
+            yValue = yValue.add(coefficientMatrix.getMatrix()[idx][0].multiply(new BigDecimal(Double.toString(x)).pow(idx)));
         }
 
         return yValue.doubleValue();
