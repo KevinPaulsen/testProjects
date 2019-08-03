@@ -19,7 +19,8 @@ public class Matrix {
     private BigDecimal[][] matrix;
     private int numColumns;
     private int numRows;
-    private static int scale = 100;
+    public static final int scale = 300;
+    public static final int finalScale = 200;
 
     Matrix(ArrayList<ArrayList<BigDecimal>> twoDemArray) {
         numRows = twoDemArray.size();
@@ -49,8 +50,8 @@ public class Matrix {
 
     private Matrix(BigDecimal[][] matrix) {
         this.matrix = matrix;
-        numColumns = matrix.length;
-        numRows = matrix[0].length;
+        numRows = matrix.length;
+        numColumns = matrix[0].length;
     }
 
     void printMatrix() {
@@ -58,7 +59,7 @@ public class Matrix {
             for (BigDecimal value : row) {
                 if (value.doubleValue() == 1) {
                     System.out.printf(ANSI_GREEN + "%20.50f " + ANSI_RESET, value.doubleValue());
-                } else if (value.remainder(new BigDecimal("1")).abs().doubleValue() < 0.0000000001) {
+                } else if (value.remainder(new BigDecimal("1").setScale(scale, RoundingMode.HALF_UP)).abs().doubleValue() < 0.0000000001) {
                     System.out.printf(ANSI_WHITE + "%20.50f " + ANSI_RESET, value.doubleValue());
                 } else {
                     System.out.printf(ANSI_RED + "%20.50f " + ANSI_RESET, value.doubleValue());
@@ -98,9 +99,10 @@ public class Matrix {
             makeColumnZero(row, matrixCopy.getMatrix(), augmentedMatrix.getMatrix());
         }
 
-        this.printMatrix();
+        /*this.printMatrix();
         System.out.println("\n-----------------------------------------------------------------------------------------\n");
-        (augmentedMatrix).printMatrix();
+        (augmentedMatrix).printMatrix();//*/
+        //this.getMultiply(augmentedMatrix).printMatrix();//*/
 
         return augmentedMatrix;
     }
@@ -124,13 +126,23 @@ public class Matrix {
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
                 if (row == column) {
-                    matrixValues[row][column] = new BigDecimal("1");
+                    matrixValues[row][column] = new BigDecimal("1").setScale(scale, RoundingMode.HALF_UP);
                 } else {
-                    matrixValues[row][column] = new BigDecimal("0");
+                    matrixValues[row][column] = new BigDecimal("0").setScale(scale, RoundingMode.HALF_UP);
                 }
             }
         }
         return new Matrix(matrixValues);
+    }
+
+    Matrix reduceScale() {
+        BigDecimal[][] newMatrix = new BigDecimal[numRows][numColumns];
+        for (int row = 0; row < numRows; row++ ) {
+            for (int column = 0; column < numColumns; column++) {
+                newMatrix[row][column] = matrix[row][column].setScale(finalScale, RoundingMode.HALF_UP);
+            }
+        }
+        return new Matrix(newMatrix);
     }
 
     private void subtract(BigDecimal[] matrixRow, BigDecimal[] subtractMatrix) {
@@ -176,7 +188,7 @@ public class Matrix {
     }
 
     private static BigDecimal decimalCopy(BigDecimal original) {
-        return original.multiply(new BigDecimal("1"));
+        return original.multiply(new BigDecimal("1").setScale(scale, RoundingMode.HALF_UP));
     }
 
     BigDecimal[][] getMatrix() {

@@ -1,6 +1,7 @@
 package polynomialregression;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 class Vector {
 
@@ -14,7 +15,7 @@ class Vector {
         if (dimensions.length != vector.getSize()) {
             throw new RuntimeException("Vectors are not of same size.");
         }
-        BigDecimal dotProduct = new BigDecimal("0");
+        BigDecimal dotProduct = new BigDecimal("0").setScale(Matrix.scale, RoundingMode.HALF_UP);
 
         for (int idx = 0; idx < dimensions.length; idx++) {
             dotProduct = dotProduct.add(this.dimensions[idx].multiply(vector.getDimensions()[idx]));

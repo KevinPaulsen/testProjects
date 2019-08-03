@@ -2,6 +2,7 @@ package polynomialregression;
 
 import java.awt.Point;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +24,14 @@ public class PolynomialRegression {
         this.dataPoints = dataPoints;
         this.degree = degree;
         mapSums = new HashMap<>();
+
+        regressPoints();
     }
 
-    public void regressPoints() {
+    private void regressPoints() {
         init();
 
-        coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix);
+        coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix).reduceScale();
     }
 
     private void init() {
@@ -46,10 +49,10 @@ public class PolynomialRegression {
         for (int row = 0; row <= degree; row++) {
             ArrayList<BigDecimal> rowValues = new ArrayList<>();
             for (int column = 0; column <= degree; column++) {
-                rowValues.add(new BigDecimal(mapSums.get(new Variable("x", row + column)).toString()));
+                rowValues.add(mapSums.get(new Variable("x", row + column)).setScale(Matrix.scale, RoundingMode.HALF_UP));
             }
             ArrayList<BigDecimal> result = new ArrayList<>();
-            result.add(new BigDecimal(mapSums.get(new Variable("xy", row)).toString()));
+            result.add(mapSums.get(new Variable("xy", row)).setScale(Matrix.scale, RoundingMode.HALF_UP));
             resultMatrix.add(result);
             valueMatrix.add(rowValues);
         }
@@ -58,15 +61,15 @@ public class PolynomialRegression {
     }
 
     private void calculatePowSum(int power) {
-        BigDecimal xSum = new BigDecimal("0");
-        BigDecimal ySum = new BigDecimal("0");
+        BigDecimal xSum = new BigDecimal("0").setScale(Matrix.scale, RoundingMode.HALF_UP);
+        BigDecimal ySum = new BigDecimal("0").setScale(Matrix.scale, RoundingMode.HALF_UP);
         boolean calcYValues = power <= degree;
 
         for (Point point : dataPoints) {
-            BigDecimal powX1 = new BigDecimal(Integer.toString(point.x)).pow(power);
+            BigDecimal powX1 = new BigDecimal(Integer.toString(point.x)).pow(power).setScale(Matrix.scale, RoundingMode.HALF_UP);
             xSum = xSum.add(powX1);
             if (calcYValues) {
-                ySum = ySum.add(new BigDecimal(Integer.toString(point.y)).multiply(powX1));
+                ySum = ySum.add(new BigDecimal(Integer.toString(point.y)).multiply(powX1).setScale(Matrix.scale, RoundingMode.HALF_UP));
             }
         }
         mapSums.put(new Variable("x", power), xSum);
@@ -76,12 +79,16 @@ public class PolynomialRegression {
     }
 
     double getYValue(double x) {
-        BigDecimal yValue = new BigDecimal("0");
+        BigDecimal yValue = new BigDecimal("0").setScale(Matrix.scale, RoundingMode.HALF_UP);
 
         for (int idx = 0; idx < coefficientMatrix.getMatrix().length; idx++) {
-            yValue = yValue.add(coefficientMatrix.getMatrix()[idx][0].multiply(new BigDecimal(Double.toString(x)).pow(idx)));
+            yValue = yValue.add(coefficientMatrix.getMatrix()[idx][0].multiply(new BigDecimal(Double.toString(x)).setScale(Matrix.scale, RoundingMode.HALF_UP).pow(idx)));
         }
 
         return yValue.doubleValue();
+    }
+
+    void printCoefficients() {
+        coefficientMatrix.printMatrix();
     }
 }

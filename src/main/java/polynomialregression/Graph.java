@@ -25,7 +25,7 @@ public class Graph extends JFrame {
     public void paint(Graphics g) {
     }
 
-    private void initialize() {
+    void initialize() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(windowWidth, windowHeight + 22);
         setResizable(false);
