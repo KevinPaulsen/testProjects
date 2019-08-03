@@ -8,16 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PolynomialRegression {
+public class PolynomialRegression extends Equation {
 
     private int degree;
     private List<Point> dataPoints;
     private Map<Variable, BigDecimal> mapSums;
     private Matrix valueMatrix;
     private Matrix resultMatrix;
-    private Matrix coefficientMatrix;
 
     public PolynomialRegression(ArrayList<Point> dataPoints, int degree) {
+        super(degree + 1);
         if (dataPoints.size() < degree) {
             throw new RuntimeException("Not enough points to have a polynomial of degree: " + dataPoints.size());
         }
@@ -31,7 +31,10 @@ public class PolynomialRegression {
     private void regressPoints() {
         init();
 
-        coefficientMatrix = valueMatrix.getInverse2().getMultiply(resultMatrix).reduceScale();
+        BigDecimal[][] coefficients = valueMatrix.getInverse2().getMultiply(resultMatrix).reduceScale().getMatrix();
+        for (int idx = 0; idx < coefficients.length; idx++) {
+            terms[idx] = coefficients[idx][0];
+        }
     }
 
     private void init() {
@@ -76,19 +79,5 @@ public class PolynomialRegression {
         if (calcYValues) {
             mapSums.put(new Variable("xy", power), ySum);
         }
-    }
-
-    double getYValue(double x) {
-        BigDecimal yValue = new BigDecimal("0").setScale(Matrix.scale, RoundingMode.HALF_UP);
-
-        for (int idx = 0; idx < coefficientMatrix.getMatrix().length; idx++) {
-            yValue = yValue.add(coefficientMatrix.getMatrix()[idx][0].multiply(new BigDecimal(Double.toString(x)).setScale(Matrix.scale, RoundingMode.HALF_UP).pow(idx)));
-        }
-
-        return yValue.doubleValue();
-    }
-
-    void printCoefficients() {
-        coefficientMatrix.printMatrix();
     }
 }

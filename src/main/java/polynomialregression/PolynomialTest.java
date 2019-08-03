@@ -14,7 +14,7 @@ public class PolynomialTest implements KeyListener {
     private ArrayList<Point> xPoints = new ArrayList<>();
     private ArrayList<Point> yPoints = new ArrayList<>();
     private double scale = 0.53;
-    private Graph graph = new Graph(1600, 950, -600, -390, scale);
+    private Graph graph = new Graph(1600, 950, 0, -200, scale);
     private int degree = 30;
     private PolynomialRegression xRegression;
     private PolynomialRegression yRegression;
@@ -44,17 +44,29 @@ public class PolynomialTest implements KeyListener {
         graph.addKeyListener(this);
 
 
+        int xSum = 0;
+        int ySum = 0;
+        double xAverage = 0;
+        double yAverage = 0;
         try {
             Scanner scanner = new Scanner(new File("list2.txt"));
             scanner.next();
             while (scanner.hasNext()) {
                 int x = scanner.nextInt();
                 int y = scanner.nextInt();
+
+                xSum += x;
+                ySum += y;
                 mapPoints.add(new Point(x, y));
             }
+            xAverage = ((double) xSum) / mapPoints.size();
+            yAverage = ((double) ySum) / mapPoints.size();
+
             for (int i = 0; i < mapPoints.size(); i += 5) {
-                xPoints.add(new Point(i, mapPoints.get(i).x));
-                yPoints.add(new Point(i, mapPoints.get(i).y));
+                //xPoints.add(new Point(i, mapPoints.get(i).x));
+                //yPoints.add(new Point(i, mapPoints.get(i).y));
+                xPoints.add(new Point(i, (int) Math.round(mapPoints.get(i).x - xAverage)));
+                yPoints.add(new Point(i, (int) Math.round(mapPoints.get(i).y - yAverage)));
             }
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
@@ -66,6 +78,7 @@ public class PolynomialTest implements KeyListener {
 
         drawThings();
 
+        graph.drawPoint(xAverage, yAverage, 3, Color.red);
 
         //*/
     }
@@ -76,8 +89,11 @@ public class PolynomialTest implements KeyListener {
         graph.initialize();
         graph.drawGridLines();
 
+        long mills = System.currentTimeMillis();
         xRegression = new PolynomialRegression(xPoints, degree);
         yRegression = new PolynomialRegression(yPoints, degree);
+        System.out.println(System.currentTimeMillis() - mills);
+
         if (DRAW_X_VALUES) {
             drawPoints(xPoints, graph);
             approximateLine(xRegression, graph, xPoints.get(0).x, xPoints.get(xPoints.size() - 1).x, (1.0 / scale), Color.CYAN);
@@ -89,7 +105,7 @@ public class PolynomialTest implements KeyListener {
         }
 
         if (DRAW_RACING_LINE) {
-            drawPoints(mapPoints, graph);
+            //drawPoints(mapPoints, graph);
             drawParametricEquation(new ParametricEquation(xRegression, yRegression), xPoints.get(xPoints.size() - 1).x - 1, graph);
         }//*/
     }

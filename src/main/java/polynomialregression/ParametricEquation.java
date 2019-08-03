@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 
 public class ParametricEquation {
 
-    private PolynomialRegression x;
-    private PolynomialRegression y;
+    private Equation x;
+    private Equation y;
 
-    public ParametricEquation(PolynomialRegression x, PolynomialRegression y) {
+    public ParametricEquation(Equation x, Equation y) {
         this.x = x;
         this.y = y;
     }
