@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PolynomialRegression extends Equation {
+public class PolynomialRegression extends PolynomialEquation {
 
     private int degree;
     private List<Point> dataPoints;

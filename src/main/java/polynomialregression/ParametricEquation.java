@@ -1,16 +1,20 @@
 package polynomialregression;
 
-import java.math.BigDecimal;
-
 public class ParametricEquation {
 
-    private Equation x;
-    private Equation y;
+    private PolynomialEquation x;
+    private PolynomialEquation y;
 
-    public ParametricEquation(Equation x, Equation y) {
+
+
+    public ParametricEquation(PolynomialEquation x, PolynomialEquation y) {
         this.x = x;
         this.y = y;
     }
+
+    //double getCurvatureAtT(int t) {
+
+    //}
 
     double getXValueAtT(int t) {
         return x.getYValue(t);

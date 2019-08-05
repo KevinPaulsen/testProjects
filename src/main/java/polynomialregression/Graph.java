@@ -7,16 +7,18 @@ public class Graph extends JFrame {
 
     private int xAxis;
     private int yAxis;
-    private double scale;
+    private double xScale;
+    private double yScale;
     private int windowWidth, windowHeight;
 
-    Graph(int windowWidth, int windowHeight, int xOffset, int yOffset, double scale) {
+    Graph(int windowWidth, int windowHeight, int xOffset, int yOffset, double xScale, double yScale) {
         this.windowHeight = windowHeight;
         this.windowWidth = windowWidth;
 
         this.xAxis = windowWidth / 2 + xOffset;
         this.yAxis = windowHeight / 2 - yOffset;
-        this.scale = scale;
+        this.xScale = xScale;
+        this.yScale = yScale;
 
         initialize();
     }
@@ -37,7 +39,7 @@ public class Graph extends JFrame {
     void drawPoint(double x, double y, int size, Color color) {
         Graphics g = getGraphics();
         g.setColor(color);
-        g.fillRect((int) Math.round (x * scale) + xAxis, yAxis - (int) Math.round(y * scale), size, size);
+        g.fillRect((int) Math.round(x * xScale) + xAxis, yAxis - (int) Math.round(y * yScale), size, size);
     }
 
     void drawGridLines() {
@@ -51,10 +53,6 @@ public class Graph extends JFrame {
 
     public int getWindowHeight() {
         return windowHeight;
-    }
-
-    void setColor(Color color) {
-        getGraphics().setColor(color);
     }
 }
 
