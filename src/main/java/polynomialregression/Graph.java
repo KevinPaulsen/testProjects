@@ -5,13 +5,14 @@ import java.awt.*;
 
 public class Graph extends JFrame {
 
-    private int xAxis;
-    private int yAxis;
-    private double xScale;
-    private double yScale;
-    private int windowWidth, windowHeight;
+    private final int xAxis;
+    private final int yAxis;
+    private final double xScale;
+    private final double yScale;
+    private final int windowWidth;
+    private final int windowHeight;
 
-    Graph(int windowWidth, int windowHeight, int xOffset, int yOffset, double xScale, double yScale) {
+    public Graph(int windowWidth, int windowHeight, int xOffset, int yOffset, double xScale, double yScale) {
         this.windowHeight = windowHeight;
         this.windowWidth = windowWidth;
 
@@ -24,10 +25,9 @@ public class Graph extends JFrame {
     }
 
     @Override
-    public void paint(Graphics g) {
-    }
+    public void paint(Graphics g) {}
 
-    void initialize() {
+    public void initialize() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(windowWidth, windowHeight + 22);
         setResizable(false);
@@ -36,13 +36,13 @@ public class Graph extends JFrame {
         setIgnoreRepaint(true);
     }
 
-    void drawPoint(double x, double y, int size, Color color) {
+    public void drawPoint(double x, double y, int size, Color color) {
         Graphics g = getGraphics();
         g.setColor(color);
         g.fillRect((int) Math.round(x * xScale) + xAxis, yAxis - (int) Math.round(y * yScale), size, size);
     }
 
-    void drawGridLines() {
+    public void drawGridLines() {
         getGraphics().drawLine(xAxis, 0, xAxis, windowHeight + 22);
         getGraphics().drawLine(0, yAxis, windowWidth, yAxis);
     }

@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class PolynomialRegression extends PolynomialEquation {
 
-    private int degree;
-    private List<Point> dataPoints;
-    private Map<Variable, BigDecimal> mapSums;
+    private final int degree;
+    private final List<Point> dataPoints;
+    private final Map<Variable, BigDecimal> mapSums;
     private Matrix valueMatrix;
     private Matrix resultMatrix;
 

@@ -11,16 +11,11 @@ class PolynomialEquation {
      * up to x^n.
      */
     protected BigDecimal[] terms;
-    private int numTerms;
+    private final int numTerms;
 
     PolynomialEquation(int numTerms) {
         this.numTerms = numTerms;
         terms = new BigDecimal[numTerms];
-    }
-
-    PolynomialEquation(BigDecimal[] terms) {
-        this.terms = terms;
-        numTerms = terms.length;
     }
 
     double getYValue(double x) {
