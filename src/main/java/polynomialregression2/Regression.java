@@ -24,7 +24,9 @@ public class Regression extends Equation {
 
     private void regressPoints() {
         init();
+        System.out.println(coefficientMatrix.toString());
         coefficientMatrix.reduceToReducedRowEchelonForm();
+        System.out.println(coefficientMatrix.toString());
         for (int row = 0; row < coefficientMatrix.m; row++) {
             terms[row] = coefficientMatrix.getValue(row, coefficientMatrix.n - 1);
         }
@@ -48,15 +50,15 @@ public class Regression extends Equation {
     }
 
     private void calculatePowSum(int power) {
-        BigDecimal xSum = new BigDecimal("0").setScale(scale, RoundingMode.HALF_UP);
-        BigDecimal ySum = new BigDecimal("0").setScale(scale, RoundingMode.HALF_UP);
+        BigDecimal xSum = new BigDecimal("0");
+        BigDecimal ySum = new BigDecimal("0");
         boolean calcYValues = power <= degree;
 
         for (Point point : points) {
-            BigDecimal powX1 = new BigDecimal(Integer.toString(point.x)).pow(power).setScale(scale, RoundingMode.HALF_UP);
+            BigDecimal powX1 = new BigDecimal(Integer.toString(point.x)).pow(power);
             xSum = xSum.add(powX1);
             if (calcYValues) {
-                ySum = ySum.add(new BigDecimal(Integer.toString(point.y)).multiply(powX1).setScale(scale, RoundingMode.HALF_UP));
+                ySum = ySum.add(new BigDecimal(Integer.toString(point.y)).multiply(powX1));
             }
         }
         mapSums.put(new Variable("x", power), xSum);

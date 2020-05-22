@@ -10,9 +10,8 @@ public class Equation {
      * X value is equal to x^idx.
      */
     protected final BigDecimal[] terms;
-    protected final int scale = 50;
+    protected final int scale = 200;
     protected final int degree;
-    private static int count = 0;
 
     public Equation(int degree) {
         this.degree = degree;
@@ -24,12 +23,11 @@ public class Equation {
     }
 
     public double evaluateAt(double x) {
-        BigDecimal value = new BigDecimal(0).setScale(scale, RoundingMode.HALF_UP);
-        final BigDecimal xValue = new BigDecimal(x).setScale(scale, RoundingMode.HALF_UP);
+        BigDecimal value = new BigDecimal(0);
+        final BigDecimal xValue = new BigDecimal(x);
         for (int idx = 0; idx < terms.length; idx++) {
             value = value.add(terms[idx].multiply(xValue.pow(idx)));
         }
-        System.out.println(count++);
         return value.doubleValue();
     }
 

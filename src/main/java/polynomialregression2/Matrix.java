@@ -26,8 +26,8 @@ public class Matrix {
     }
 
     public void reduceToReducedRowEchelonForm() {
-        final BigDecimal one = new BigDecimal(1).setScale(scale, RoundingMode.HALF_UP);
-        final BigDecimal negativeOne = new BigDecimal(-1).setScale(scale, RoundingMode.HALF_UP);
+        final BigDecimal one = new BigDecimal(1);
+        final BigDecimal negativeOne = new BigDecimal(-1);
         for (int row = 0; row < m; row++) {
             // Make Leading 1 at MxM
             divideRow(row, matrix[row][row]);
@@ -51,7 +51,7 @@ public class Matrix {
 
     private void divideRow(int targetRow, BigDecimal value) {
         for (int col = 0; col < n; col++) {
-            matrix[targetRow][col] = matrix[targetRow][col].divide(value, RoundingMode.HALF_UP);
+            matrix[targetRow][col] = matrix[targetRow][col].setScale(scale, RoundingMode.HALF_UP).divide(value, RoundingMode.HALF_UP);
         }
     }
 

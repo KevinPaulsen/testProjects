@@ -17,7 +17,7 @@ public class PolynomialTest implements KeyListener {
     private final double yScale = 0.35;
 
     private final Graph graph = new Graph(1600, 950, -700, -200, xScale, yScale);
-    private int degree = 20;
+    private int degree = 50;
 
     private static final boolean DRAW_Y_VALUES = false;
     private static final boolean DRAW_X_VALUES = true;

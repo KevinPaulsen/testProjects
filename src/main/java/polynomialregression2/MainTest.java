@@ -11,11 +11,12 @@ import java.util.Scanner;
 
 public class MainTest {
 
-    private final double xScale = 0.35;
-    private final double yScale = 0.35;
-    private final String filePath = "list2.txt";
+    private final double xScale = 0.5;
+    private final double yScale = 0.5;
+    private final String filePath = "list.txt";
     private final ArrayList<Point> xPoints = new ArrayList<>();
     private final ArrayList<Point> yPoints = new ArrayList<>();
+    private final ArrayList<Point> points = new ArrayList<>();
     private final Graph graph = new Graph(1600, 950, -700, -400, xScale, yScale);
 
     public static void main(String[] args) {
@@ -26,9 +27,13 @@ public class MainTest {
 
         initializePoints();
 
-        Equation xRegression = new Regression(10, xPoints);
+        Equation xRegression = new Regression(70, xPoints);
+        Equation yRegression = new Regression(70, yPoints);
         drawScreen();
         approximateLine(xRegression, xPoints.get(0).x, xPoints.get(xPoints.size() - 1).x, (1.0 / xScale), Color.CYAN);
+        approximateLine(yRegression, xPoints.get(0).x, xPoints.get(xPoints.size() - 1).x, (1.0 / xScale), Color.CYAN);
+
+        drawParametricEquation(xRegression, yRegression);
     }
 
     private void drawScreen() {
@@ -37,9 +42,11 @@ public class MainTest {
         graph.drawGridLines();
 
         drawPoints(xPoints);
+        drawPoints(yPoints);
+        drawPoints(points);
     }
 
-    private void drawParametricEquation(Equation xEquation, Equation yEquation, Graph graph) {
+    private void drawParametricEquation(Equation xEquation, Equation yEquation) {
         for (int t = 0; t < xPoints.size(); t++) {
             graph.drawPoint(
                     xEquation.evaluateAt(t),
@@ -76,6 +83,7 @@ public class MainTest {
                 int y = scanner.nextInt();
                 xPoints.add(new Point(count, x));
                 yPoints.add(new Point(count, y));
+                points.add(new Point(x, y));
                 count++;
             }
         } catch (FileNotFoundException ex) {
