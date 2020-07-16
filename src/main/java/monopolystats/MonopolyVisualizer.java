@@ -8,7 +8,7 @@ public class MonopolyVisualizer extends JFrame {
     private static final int width = 1900;
     private static final int height = 900;
     private static final int COLUMN_WIDTH = 20;
-    private static final int COlUMN_MAX_HEIGHT = 3000;
+    private static final int COlUMN_MAX_HEIGHT = 10000;
     private final Position[] positions;
 
     public MonopolyVisualizer(Position[] positions) {

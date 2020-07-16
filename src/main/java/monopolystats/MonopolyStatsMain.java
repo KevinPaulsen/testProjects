@@ -76,7 +76,7 @@ public class MonopolyStatsMain implements KeyListener {
 
     private static void nextRoll() {
         for (int idx = 0; idx < positions.length; idx++) {
-            updateFuturePositions(idx);
+            updateFuturePositions(idx, positions[idx].getProbability(), 0);
         }
         for (Position position : positions) {
             position.setProbability(position.getBufferedProbability());
@@ -84,12 +84,48 @@ public class MonopolyStatsMain implements KeyListener {
         }
     }
 
-    private static void updateFuturePositions(int idx) {
-        Position currentPosition = positions[idx];
-        for (int roll = 2; roll <= 12; roll++) {
-            positions[(idx + roll) % 40].setBufferedProbability(positions[(idx + roll) % 40].getBufferedProbability() +
-                    (currentPosition.getProbability() * rollProbability[roll]));
+    private static void updateFuturePositions(int idx, double probabilityAtIdx, int doubleCount) {
+
+
+        for (int die1 = 1; die1 <= 6; die1++) {
+            for (int die2 = 1; die2 <= 6; die2++) {
+
+               if (die1 == die2) { // Doubles
+                   if (doubleCount < 2) {
+                       updateFuturePositions(die1 + die2 + idx, (probabilityAtIdx * 1.0 / 36), doubleCount + 1);
+                   } else {
+                       positions[10].setBufferedProbability(positions[10].getBufferedProbability() + probabilityAtIdx * (1.0 / 36));
+                   }
+               } else if (die1 + die2 + idx == 30) { // Go To Jail
+                   positions[10].setBufferedProbability(positions[10].getBufferedProbability() + probabilityAtIdx * (1.0 / 36));
+               } else {
+                   positions[(idx + die1 + die2) % 40].setBufferedProbability(positions[(idx + die1 + die2) % 40].getBufferedProbability() + (1.0 / 36 * probabilityAtIdx));
+               }
+            }
         }
+        /*
+
+
+
+        Position currentPosition = positions[idx % 40];
+        for (int roll1 = 1; roll1 <= 6; roll1++) {
+            for (int roll2 = 1; roll2 <= 6; roll2++) {
+                int roll = roll1 + roll2;
+
+                if (roll1 == roll2) { // Landed on idx + roll but is double
+                    doubleCount++;
+                    if (doubleCount == 3) {
+                        positions[10].setBufferedProbability(positions[10].getBufferedProbability() + 1.0/46656);
+                        doubleCount--;
+                    } else {
+                        updateFuturePositions(idx + roll, doubleCount);
+                    }
+                } else {
+                    positions[(idx + roll) % 40].setBufferedProbability(positions[(idx + roll) % 40].getBufferedProbability() +
+                            (currentPosition.getProbability() * rollProbability[roll]));
+                }
+            }
+        }//*/
     }
 
     @Override
@@ -101,6 +137,12 @@ public class MonopolyStatsMain implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             nextRoll();
             visualizer.displayProbability();
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            double sum = 0;
+            for (Position position : positions) {
+                sum += position.getProbability();
+            }
+            System.out.println(sum);
         }
     }
 
