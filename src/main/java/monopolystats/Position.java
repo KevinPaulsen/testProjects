@@ -6,8 +6,9 @@ public class Position {
 
     private final String name;
     private final Color color;
-    private double probability = 0;
+    private double probability;
     private double bufferedProbability = 0;
+    private double averageTimesLanded = 0;
 
     public Position(String name, Color color, double probability) {
         this.name = name;
@@ -25,6 +26,18 @@ public class Position {
 
     public double getBufferedProbability() {
         return bufferedProbability;
+    }
+
+    public double getAverageTimesLanded() {
+        return averageTimesLanded;
+    }
+
+    public void addAverageTimesLanded(double averageTimesLanded) {
+        this.averageTimesLanded += averageTimesLanded;
+    }
+
+    public void addBufferedProbability(double bufferedProbability) {
+        this.bufferedProbability += bufferedProbability;
     }
 
     public void setBufferedProbability(double bufferedProbability) {
