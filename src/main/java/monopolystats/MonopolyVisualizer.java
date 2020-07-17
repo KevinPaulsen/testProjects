@@ -7,9 +7,10 @@ import java.awt.geom.AffineTransform;
 public class MonopolyVisualizer extends JFrame {
     private static final int width = 1900;
     private static final int height = 900;
-    private static final int COLUMN_WIDTH = 20;
-    private static final int COlUMN_MAX_HEIGHT = 100;
+    private static final int COLUMN_WIDTH = 25;
+    private static final int MAX_COLUMN_HEIGHT = 700;
     private final Position[] positions;
+    private double COlUMN_HEIGHT_MULTIPLIER = 100;
 
     public MonopolyVisualizer(Position[] positions) {
         this.positions = positions;
@@ -34,15 +35,33 @@ public class MonopolyVisualizer extends JFrame {
         graphics2D.dispose();
     }
 
+    private double getMaxProbability() {
+        double maxProb = positions[0].getProbability();
+        for (Position position : positions) {
+            maxProb = Math.max(maxProb, position.getProbability());
+        }
+        return maxProb;
+    }
+
+    private double getMaxAverage() {
+        double maxProb = positions[0].getAverageTimesLanded();
+        for (Position position : positions) {
+            maxProb = Math.max(maxProb, position.getAverageTimesLanded());
+        }
+        return maxProb;
+    }
+
     public void displayProbability() {
         Graphics g = getGraphics();
         g.clearRect(0, 0, 2000, 1000);
         init();
 
+        COlUMN_HEIGHT_MULTIPLIER = 700 / getMaxProbability();
+
         for (int idx = 0; idx < positions.length; idx++) {
             if (positions[idx].getProbability() != 0) {
                 int center = idx * 45 + 30;
-                int height = ((int) (COlUMN_MAX_HEIGHT * positions[idx].getProbability()));
+                int height = ((int) (COlUMN_HEIGHT_MULTIPLIER * positions[idx].getProbability()));
                 g.setColor(positions[idx].getColor());
                 g.fillRect(center - (COLUMN_WIDTH / 2), 780 - height, COLUMN_WIDTH, height);
             }
@@ -54,10 +73,12 @@ public class MonopolyVisualizer extends JFrame {
         g.clearRect(0, 0, 2000, 1000);
         init();
 
+        COlUMN_HEIGHT_MULTIPLIER = 700 / getMaxAverage();
+
         for (int idx = 0; idx < positions.length; idx++) {
             if (positions[idx].getAverageTimesLanded() != 0) {
                 int center = idx * 45 + 30;
-                int height = ((int) (COlUMN_MAX_HEIGHT * positions[idx].getAverageTimesLanded()));
+                int height = ((int) (COlUMN_HEIGHT_MULTIPLIER * positions[idx].getAverageTimesLanded()));
                 g.setColor(positions[idx].getColor());
                 g.fillRect(center - (COLUMN_WIDTH / 2), 780 - height, COLUMN_WIDTH, height);
             }
