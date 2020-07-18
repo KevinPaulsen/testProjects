@@ -99,7 +99,6 @@ public class MonopolyStatsMain implements KeyListener {
             for (int die2 = 1; die2 <= 6; die2++) {
                 int currentIdx = (die1 + die2 + idx) % 40;
                 // Add position to average times landed
-                nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * 1.0 / 36);
 
                 int closestRailroad = 5;
                 if (currentIdx == 7) {
@@ -111,6 +110,7 @@ public class MonopolyStatsMain implements KeyListener {
                 if (currentIdx == 30) { // Go To Jail
                     nextMoveStats[10].addProbability(probabilityAtIdx * (1.0 / 36));
                     nextMoveStats[10].addAverageTimesLanded(probabilityAtIdx * (1.0 / 36));
+                    nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * (1.0 / 36));
                 } else if (die1 == die2) { // Doubles
                     if (doubleCount < 2) {
                         if (currentIdx == 2 || currentIdx == 17 || currentIdx == 33) { // Community Chest
@@ -126,19 +126,24 @@ public class MonopolyStatsMain implements KeyListener {
                                     (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
                             updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36) * (6.0 / 15)), doubleCount + 1);
                         } else {
+                            nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * (1.0 / 36));
                             updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36)), doubleCount + 1);
                         }
                     } else {
                         nextMoveStats[10].addProbability(probabilityAtIdx * (1.0 / 36));
+                        nextMoveStats[10].addAverageTimesLanded(probabilityAtIdx * (1.0 / 36));
                     }
                 } else if (currentIdx == 2 || currentIdx == 17 || currentIdx == 33) { // Community Chest
                     updateProbabilityFromCard(nextMoveStats, currentIdx, probabilityAtIdx, 17, 0 , 10);
+                    nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * (1.0 / 36));
                 } else if (currentIdx == 7 || currentIdx == 22 || currentIdx == 36) { // Chance
                     updateProbabilityFromCard(nextMoveStats, currentIdx, probabilityAtIdx, 15,
                             0, 5, 10, 11, 24, 39, (currentIdx + 37) % 39,
                             (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
+                    nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * (1.0 / 36));
                 } else { // Not Doubles, Didn't Move
                     nextMoveStats[(currentIdx)].addProbability((1.0 / 36) * probabilityAtIdx);
+                    nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * 1.0 / 36);
                 }
             }
         }
