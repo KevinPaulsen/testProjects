@@ -81,7 +81,6 @@ public class MonopolyStatsMain implements KeyListener {
             for (int idx = 0; idx < currentMoveStats.length; idx++) {
                 updateProbabilitiesAtIndex(nextMoveStats, idx, currentMoveStats[idx].getProbabilityOnPosition(), 0);
             }
-            System.out.println(count);
             moveStats.add(currentMoveStats);
             currentMoveStats = nextMoveStats;
         }
@@ -98,7 +97,6 @@ public class MonopolyStatsMain implements KeyListener {
     private void updateProbabilitiesAtIndex(PositionStat[] nextMoveStats, int idx, double probabilityAtIdx, int doubleCount) {
         for (int die1 = 1; die1 <= 6; die1++) {
             for (int die2 = 1; die2 <= 6; die2++) {
-                count++;
                 int currentIdx = (die1 + die2 + idx) % 40;
                 // Add position to average times landed
                 nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * 1.0 / 36);
@@ -112,14 +110,20 @@ public class MonopolyStatsMain implements KeyListener {
                 // Calculate probability this move (and any future movement from this roll) happens
                 if (currentIdx == 30) { // Go To Jail
                     nextMoveStats[10].addProbability(probabilityAtIdx * (1.0 / 36));
+                    nextMoveStats[10].addAverageTimesLanded(probabilityAtIdx * (1.0 / 36));
                 } else if (die1 == die2) { // Doubles
                     if (doubleCount < 2) {
                         if (currentIdx == 2 || currentIdx == 17 || currentIdx == 33) { // Community Chest
                             continueRollAtIndices(nextMoveStats, probabilityAtIdx * (1.0 / 17) * (1.0 / 36), doubleCount, 0, 10);
+                            updateAverageTotalFromCard(nextMoveStats, probabilityAtIdx, 17, 0, 10);
                             updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36) * (15.0 / 17)), doubleCount + 1);
                         } else if (currentIdx == 7 || currentIdx == 22 || currentIdx == 36) {
                             continueRollAtIndices(nextMoveStats, probabilityAtIdx * (1.0 / 15) * (1.0 / 36), doubleCount,
-                                    0, 5, 10, 11, 24, 39, (currentIdx + 37) % 39, (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
+                                    0, 5, 10, 11, 24, 39, (currentIdx + 37) % 39,
+                                    (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
+                            updateAverageTotalFromCard(nextMoveStats, probabilityAtIdx, 15,
+                                    0, 5, 10, 11, 24, 39, (currentIdx + 37) % 39,
+                                    (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
                             updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36) * (6.0 / 15)), doubleCount + 1);
                         } else {
                             updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36)), doubleCount + 1);
@@ -130,8 +134,8 @@ public class MonopolyStatsMain implements KeyListener {
                 } else if (currentIdx == 2 || currentIdx == 17 || currentIdx == 33) { // Community Chest
                     updateProbabilityFromCard(nextMoveStats, currentIdx, probabilityAtIdx, 17, 0 , 10);
                 } else if (currentIdx == 7 || currentIdx == 22 || currentIdx == 36) { // Chance
-                    updateProbabilityFromCard(nextMoveStats, currentIdx, probabilityAtIdx, 15, 0, 5,
-                            10, 11, 24, 39, (currentIdx + 37) % 39,
+                    updateProbabilityFromCard(nextMoveStats, currentIdx, probabilityAtIdx, 15,
+                            0, 5, 10, 11, 24, 39, (currentIdx + 37) % 39,
                             (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
                 } else { // Not Doubles, Didn't Move
                     nextMoveStats[(currentIdx)].addProbability((1.0 / 36) * probabilityAtIdx);
@@ -152,6 +156,12 @@ public class MonopolyStatsMain implements KeyListener {
             nextMoveStats[position].addAverageTimesLanded(probabilityAtIdx * (1.0 / numCards) * (1.0 / 36));
         }
         nextMoveStats[currentIdx].addProbability((1.0 / 36) * (((double) numCards - positions.length) / numCards) * probabilityAtIdx);
+    }
+
+    private void updateAverageTotalFromCard(PositionStat[] nextMoveStats, double probabilityAtIdx, int numCards, int ... positions) {
+        for (int position : positions) {
+            nextMoveStats[position].addAverageTimesLanded(probabilityAtIdx * (1.0 / numCards) * (1.0 / 36));
+        }
     }
 
     private void displayCurrentPosition() {
