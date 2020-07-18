@@ -55,6 +55,7 @@ public class MonopolyStatsMain implements KeyListener {
     private final MonopolyVisualizer visualizer;
     private int move = 0;
     private boolean displayProbability = true;
+    private int count = 0;
 
     public MonopolyStatsMain() {
         currentMoveStats = new PositionStat[positions.length];
@@ -80,6 +81,7 @@ public class MonopolyStatsMain implements KeyListener {
             for (int idx = 0; idx < currentMoveStats.length; idx++) {
                 updateProbabilitiesAtIndex(nextMoveStats, idx, currentMoveStats[idx].getProbabilityOnPosition(), 0);
             }
+            System.out.println(count);
             moveStats.add(currentMoveStats);
             currentMoveStats = nextMoveStats;
         }
@@ -96,57 +98,60 @@ public class MonopolyStatsMain implements KeyListener {
     private void updateProbabilitiesAtIndex(PositionStat[] nextMoveStats, int idx, double probabilityAtIdx, int doubleCount) {
         for (int die1 = 1; die1 <= 6; die1++) {
             for (int die2 = 1; die2 <= 6; die2++) {
+                count++;
                 int currentIdx = (die1 + die2 + idx) % 40;
+                // Add position to average times landed
                 nextMoveStats[currentIdx].addAverageTimesLanded(probabilityAtIdx * 1.0 / 36);
 
+                int closestRailroad = 5;
+                if (currentIdx == 7) {
+                    closestRailroad = 15;
+                } else if (currentIdx == 22) {
+                    closestRailroad = 25;
+                }
+                // Calculate probability this move (and any future movement from this roll) happens
                 if (currentIdx == 30) { // Go To Jail
                     nextMoveStats[10].addProbability(probabilityAtIdx * (1.0 / 36));
-                } else if (currentIdx == 2 || currentIdx == 17 || currentIdx == 33) { // Community Chest
-                    nextMoveStats[0].addProbability(probabilityAtIdx * (1.0 / 17) * (1.0 / 36)); // Go
-                    nextMoveStats[10].addProbability(probabilityAtIdx * (1.0 / 17) * (1.0 / 36)); // Jail*/
-                    nextMoveStats[0].addAverageTimesLanded(probabilityAtIdx * (1.0 / 17) * (1.0 / 36));
-                    nextMoveStats[10].addAverageTimesLanded(probabilityAtIdx * (1.0 / 17) * (1.0 / 36));
-                    nextMoveStats[currentIdx].addProbability((1.0 / 36) * (15.0 / 17) * probabilityAtIdx);
-                } else if (currentIdx == 7 || currentIdx == 22 || currentIdx == 36) {
-                    nextMoveStats[0].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // Go
-                    nextMoveStats[0].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[24].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // Illinois
-                    nextMoveStats[24].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[11].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // St. Charlies Place
-                    nextMoveStats[11].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[10].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // St. Charlies Place
-                    nextMoveStats[10].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[5].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // Reading Railroad
-                    nextMoveStats[5].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[39].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // Boardwalk
-                    nextMoveStats[39].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[(currentIdx + 37) % 40].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // Go back 3 Spaces
-                    nextMoveStats[(currentIdx + 37) % 40].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[(currentIdx < 12 || 28 < currentIdx) ? 12 : 28].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // Nearest Utility
-                    nextMoveStats[(currentIdx < 12 || 28 < currentIdx) ? 12 : 28].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-
-                    int closestRailroad;
-                    if (currentIdx == 7) {
-                        closestRailroad = 15;
-                    } else if (currentIdx == 22) {
-                        closestRailroad = 25;
-                    } else {
-                        closestRailroad = 5;
-                    }
-                    nextMoveStats[closestRailroad].addProbability(probabilityAtIdx * (1.0 / 15) * (1.0 / 36)); // Nearest Railroad//*/
-                    nextMoveStats[closestRailroad].addAverageTimesLanded(probabilityAtIdx * (1.0 / 15) * (1.0 / 36));
-                    nextMoveStats[currentIdx].addProbability((1.0 / 36) * (6.0 / 15) * probabilityAtIdx);
                 } else if (die1 == die2) { // Doubles
                     if (doubleCount < 2) {
-                        updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * 1.0 / 36), doubleCount + 1);
+                        if (currentIdx == 2 || currentIdx == 17 || currentIdx == 33) { // Community Chest
+                            continueRollAtIndices(nextMoveStats, probabilityAtIdx * (1.0 / 17) * (1.0 / 36), doubleCount, 0, 10);
+                            updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36) * (15.0 / 17)), doubleCount + 1);
+                        } else if (currentIdx == 7 || currentIdx == 22 || currentIdx == 36) {
+                            continueRollAtIndices(nextMoveStats, probabilityAtIdx * (1.0 / 15) * (1.0 / 36), doubleCount,
+                                    0, 5, 10, 11, 24, 39, (currentIdx + 37) % 39, (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
+                            updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36) * (6.0 / 15)), doubleCount + 1);
+                        } else {
+                            updateProbabilitiesAtIndex(nextMoveStats, currentIdx, (probabilityAtIdx * (1.0 / 36)), doubleCount + 1);
+                        }
                     } else {
                         nextMoveStats[10].addProbability(probabilityAtIdx * (1.0 / 36));
                     }
-                } else {
+                } else if (currentIdx == 2 || currentIdx == 17 || currentIdx == 33) { // Community Chest
+                    updateProbabilityFromCard(nextMoveStats, currentIdx, probabilityAtIdx, 17, 0 , 10);
+                } else if (currentIdx == 7 || currentIdx == 22 || currentIdx == 36) { // Chance
+                    updateProbabilityFromCard(nextMoveStats, currentIdx, probabilityAtIdx, 15, 0, 5,
+                            10, 11, 24, 39, (currentIdx + 37) % 39,
+                            (currentIdx < 12 || 28 < currentIdx) ? 12 : 28, closestRailroad);
+                } else { // Not Doubles, Didn't Move
                     nextMoveStats[(currentIdx)].addProbability((1.0 / 36) * probabilityAtIdx);
                 }
             }
         }
+    }
+
+    private void continueRollAtIndices(PositionStat[] nextMoveStats, double probabilityAtIdx, int doubleCount, int ... indices) {
+        for (int idx : indices) {
+            updateProbabilitiesAtIndex(nextMoveStats, idx, probabilityAtIdx, doubleCount + 1);
+        }
+    }
+
+    private void updateProbabilityFromCard(PositionStat[] nextMoveStats, int currentIdx, double probabilityAtIdx, int numCards, int ... positions) {
+        for (int position : positions) {
+            nextMoveStats[position].addProbability(probabilityAtIdx * (1.0 / numCards) * (1.0 / 36));
+            nextMoveStats[position].addAverageTimesLanded(probabilityAtIdx * (1.0 / numCards) * (1.0 / 36));
+        }
+        nextMoveStats[currentIdx].addProbability((1.0 / 36) * (((double) numCards - positions.length) / numCards) * probabilityAtIdx);
     }
 
     private void displayCurrentPosition() {
